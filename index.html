@@ -4,36 +4,48 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🌸 Tết Và Mùa Xuân 🌸</title>
-<!-- Thêm icon cho trang web -->
+<!-- Icon cho trang web -->
 <link rel="icon" href="images/hoa-dao.png" type="image/png">
-<!-- Thêm thư viện Lucide Icons để sử dụng bộ icon vector sắc nét -->
+<!-- Thư viện Lucide Icons sắc nét -->
 <script src="https://unpkg.com/lucide@latest"></script>
 <style>
+    :root {
+        --primary-red: #d60000;
+        --primary-green: #006600;
+        --correct-green: #28a745;
+        --wrong-red: #dc3545;
+        --tet-gold: #ffd700;
+    }
+
     body {
         margin: 0;
         font-family: Arial, sans-serif;
         text-align: center;
         background: linear-gradient(to bottom, #fff7cc, #ffd966);
+        min-height: 100vh;
         overflow-x: hidden;
     }
 
     h1 {
-        color: #d60000;
-        margin-top: 15px;
+        color: var(--primary-red);
+        margin: 15px 0;
         text-shadow: 1px 1px 2px white;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 10px;
+        font-size: 2rem;
     }
 
     .topbar {
         display: flex;
         justify-content: center;
-        gap: 40px;
-        font-size: 24px;
+        gap: 20px;
+        font-size: 1.3rem;
         font-weight: bold;
-        margin: 15px;
+        margin: 10px auto;
+        max-width: 600px;
+        padding: 0 10px;
     }
 
     .stat-badge {
@@ -44,86 +56,99 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        flex: 1;
+        justify-content: center;
     }
 
     .stat-badge.score {
-        color: #d60000;
+        color: var(--primary-red);
     }
 
     .stat-badge.timer {
-        color: #006600;
+        color: var(--primary-green);
     }
 
     #question {
-        font-size: 34px;
-        color: #006600;
-        margin: 20px auto;
+        font-size: 1.8rem;
+        color: var(--primary-green);
+        margin: 15px auto;
         background: white;
         display: inline-flex;
         align-items: center;
-        gap: 10px;
-        padding: 12px 28px;
+        justify-content: center;
+        gap: 12px;
+        padding: 10px 24px;
         border-radius: 50px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        max-width: 90%;
+        box-sizing: border-box;
     }
 
+    /* Hệ thống lưới co giãn linh hoạt theo màn hình điện thoại/máy tính */
     .game-area {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
-        padding: 20px;
-        max-width: 1000px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 15px;
+        padding: 15px;
+        max-width: 900px;
         margin: auto;
     }
 
     .card {
-        width: 180px;
-        height: 220px;
         background: white;
         border-radius: 20px;
         cursor: pointer;
-        box-shadow: 0 5px 15px rgba(0,0,0,.2);
-        transition: transform .2s, border .2s;
+        box-shadow: 0 5px 12px rgba(0,0,0,.15);
+        transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
         overflow: hidden;
         border: 5px solid transparent;
-        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        aspect-ratio: 1 / 1.22;
     }
 
     .card:hover {
-        transform: scale(1.05);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,.25);
     }
 
-    /* Hiệu ứng Đúng */
+    .card:active {
+        transform: scale(0.95);
+    }
+
+    /* Hiệu ứng rung nhảy khi đúng */
     .card.correct-card {
-        border-color: #28a745;
+        border-color: var(--correct-green);
         animation: bounce 0.5s ease;
     }
 
-    /* Hiệu ứng Sai */
+    /* Hiệu ứng lắc khi sai */
     .card.wrong-card {
-        border-color: #dc3545;
+        border-color: var(--wrong-red);
         animation: shake 0.4s ease;
     }
 
     .card-image {
         width: 100%;
-        height: 150px;
+        height: 72%;
         object-fit: cover;
-        margin-top: 10px;
+        padding-top: 5px;
     }
 
     .name {
-        font-size: 24px;
+        font-size: 1.15rem;
         font-weight: bold;
-        margin-top: 10px;
+        padding: 8px 5px;
         color: #333;
+        background: #fafafa;
+        border-top: 1px solid #eee;
     }
 
     #message {
-        font-size: 36px;
-        margin: 15px;
-        min-height: 50px;
+        font-size: 1.8rem;
+        margin: 10px;
+        min-height: 45px;
         font-weight: bold;
         display: flex;
         align-items: center;
@@ -131,8 +156,77 @@
         gap: 10px;
     }
 
-    .msg-correct { color: green; }
-    .msg-wrong { color: red; }
+    .msg-correct { color: var(--correct-green); }
+    .msg-wrong { color: var(--wrong-red); }
+
+    /* MÀN HÌNH CHỜ & KẾT THÚC: Đỏ hoàng gia viền kép vàng rực rỡ không khí Tết */
+    .overlay-screen {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle, #e60000 20%, #800000 100%);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        z-index: 1000;
+        padding: 20px;
+        border: 10px double var(--tet-gold);
+        box-sizing: border-box;
+        box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.6);
+    }
+
+    .overlay-screen h2 {
+        font-size: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        color: var(--tet-gold);
+        margin-bottom: 20px;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .overlay-screen p {
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+        text-align: center;
+        max-width: 500px;
+        line-height: 1.6;
+        color: #fffef0;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .tet-decor {
+        font-size: 2.5rem;
+        color: var(--tet-gold);
+        margin: 10px 0;
+        display: flex;
+        gap: 20px;
+    }
+
+    .pulse-btn {
+        padding: 15px 40px;
+        font-size: 1.5rem;
+        border: 3px solid var(--tet-gold);
+        border-radius: 50px;
+        cursor: pointer;
+        background: #b30000;
+        color: var(--tet-gold);
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        animation: pulse 1.5s infinite;
+        transition: transform 0.2s, background 0.2s;
+    }
+
+    .pulse-btn:hover {
+        transform: scale(1.05);
+        background: #990000;
+    }
 
     /* Keyframes hiệu ứng */
     @keyframes shake {
@@ -147,44 +241,10 @@
         50% { transform: translateY(-20px); }
     }
 
-    #endScreen {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,.9);
-        color: white;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        z-index: 999;
-    }
-
-    #endScreen h2 {
-        font-size: 50px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        color: #ffd966;
-    }
-
-    button {
-        padding: 15px 35px;
-        font-size: 24px;
-        border: none;
-        border-radius: 15px;
-        cursor: pointer;
-        background: #d60000;
-        color: white;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        box-shadow: 0 4px 15px rgba(214,0,0,0.4);
-        transition: background 0.2s;
-    }
-
-    button:hover {
-        background: #b30000;
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+        70% { box-shadow: 0 0 0 18px rgba(255, 215, 0, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
     }
 
     .firework {
@@ -197,6 +257,13 @@
     @keyframes boom {
         from { opacity: 1; transform: translateY(0) scale(1); }
         to { opacity: 0; transform: translateY(-150px) scale(2); }
+    }
+
+    @media (min-width: 600px) {
+        .game-area {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
     }
 </style>
 </head>
@@ -215,77 +282,66 @@
     </div>
     <div class="stat-badge timer">
         <i data-lucide="timer"></i>
-        <span><span id="timer">60</span>s</span>
+        <span>Còn: <span id="timer">60</span>s</span>
     </div>
 </div>
 
 <div id="question"></div>
 <div id="message"></div>
 
-<div class="game-area" id="gameArea">
-    <!-- Các thẻ Card (Giữ nguyên nguồn hình ảnh có sẵn của bạn) -->
-    <div class="card" data-ans="mai" onclick="checkAnswer(this)">
-        <img src="images/hoa-mai.png" alt="Hoa Mai" class="card-image">
-        <div class="name">Hoa Mai</div>
+<!-- Khung lưới chứa thẻ hình ảnh -->
+<div class="game-area" id="gameArea"></div>
+
+<!-- Màn hình chờ bắt đầu cát tường -->
+<div id="startScreen" class="overlay-screen">
+    <div class="tet-decor">
+        <i data-lucide="flower"></i>
+        <i data-lucide="sparkles"></i>
+        <i data-lucide="flower-2"></i>
     </div>
-    <div class="card" data-ans="dao" onclick="checkAnswer(this)">
-        <img src="images/hoa-dao.png" alt="Hoa Đào" class="card-image">
-        <div class="name">Hoa Đào</div>
-    </div>
-    <div class="card" data-ans="chung" onclick="checkAnswer(this)">
-        <img src="images/banh-chung.png" alt="Bánh Chưng" class="card-image">
-        <div class="name">Bánh Chưng</div>
-    </div>
-    <div class="card" data-ans="tet" onclick="checkAnswer(this)">
-        <img src="images/banh-tet.png" alt="Bánh Tét" class="card-image">
-        <div class="name">Bánh Tét</div>
-    </div>
-    <div class="card" data-ans="lixi" onclick="checkAnswer(this)">
-        <img src="images/bao-li-xi.png" alt="Bao Lì Xì" class="card-image">
-        <div class="name">Bao Lì Xì</div>
-    </div>
-    <div class="card" data-ans="dua" onclick="checkAnswer(this)">
-        <img src="images/dua-hau.png" alt="Dưa Hấu" class="card-image">
-        <div class="name">Dưa Hấu</div>
-    </div>
-    <div class="card" data-ans="mam" onclick="checkAnswer(this)">
-        <img src="images/mam-ngu-qua.png" alt="Mâm Ngũ Quả" class="card-image">
-        <div class="name">Mâm Ngũ Quả</div>
-    </div>
-    <div class="card" data-ans="den" onclick="checkAnswer(this)">
-        <img src="images/den-long.png" alt="Đèn Lồng" class="card-image">
-        <div class="name">Đèn Lồng</div>
-    </div>
+    <h2>🏮 CHÚC MỪNG NĂM MỚI! 🏮</h2>
+    <p><i>Bé hãy lắng nghe cô đọc câu hỏi trên màn hình để tìm đáp án đúng nhé!</i></p>
+    <button class="pulse-btn" onclick="startGame()">
+        <i data-lucide="play"></i>
+        Bắt Đầu Chơi Xuân 🌸
+    </button>
 </div>
 
-<div id="endScreen">
-    <h2><i data-lucide="trophy"></i> HOÀN THÀNH</h2>
-    <p style="font-size:35px">Điểm của bé: <span id="finalScore"></span></p>
-    <button onclick="restartGame()">
+<!-- Màn hình kết quả vinh danh rực rỡ -->
+<div id="endScreen" class="overlay-screen" style="display: none;">
+    <div class="tet-decor">
+        <i data-lucide="party-popper"></i>
+        <i data-lucide="trophy" style="color: var(--tet-gold);"></i>
+        <i data-lucide="party-popper"></i>
+    </div>
+    <h2>🏆 CUNG CHÚC TÂN XUÂN 🏆</h2>
+    <p>Bé đã hoàn thành trò chơi vô cùng xuất sắc!<br>Số điểm nhận lì xì của bé là: <strong id="finalScore" style="color: var(--tet-gold); font-size: 2.8rem; text-shadow: 2px 2px 6px #000;">0</strong></p>
+    <button class="pulse-btn" onclick="restartGame()">
         <i data-lucide="refresh-cw"></i>
-        Chơi Lại
+        Chơi Lại Nhé 🔄
     </button>
 </div>
 
 <script>
+// Giữ nguyên nguồn dữ liệu ảnh ban đầu của bạn
 const data = [
-    { name: "Hoa Mai", answer: "mai" },
-    { name: "Hoa Đào", answer: "dao" },
-    { name: "Bánh Chưng", answer: "chung" },
-    { name: "Bánh Tét", answer: "tet" },
-    { name: "Bao Lì Xì", answer: "lixi" },
-    { name: "Dưa Hấu", answer: "dua" },
-    { name: "Mâm Ngũ Quả", answer: "mam" },
-    { name: "Đèn Lồng", answer: "den" }
+    { name: "Hoa Mai", answer: "mai", src: "images/hoa-mai.png" },
+    { name: "Hoa Đào", answer: "dao", src: "images/hoa-dao.png" },
+    { name: "Bánh Chưng", answer: "chung", src: "images/banh-chung.png" },
+    { name: "Bánh Tét", answer: "tet", src: "images/banh-tet.png" },
+    { name: "Bao Lì Xì", answer: "lixi", src: "images/bao-li-xi.png" },
+    { name: "Dưa Hấu", answer: "dua", src: "images/dua-hau.png" },
+    { name: "Mâm Ngũ Quả", answer: "mam", src: "images/mam-ngu-qua.png" },
+    { name: "Đèn Lồng", answer: "den", src: "images/den-long.png" }
 ];
 
 let currentQuestion;
 let score = 0;
 let timeLeft = 60;
-let timer;
-let isWaiting = false; // Ngăn bấm liên tục khi đang chuyển câu hỏi
+let timer = null;
+let isWaiting = false;
 
-// Khởi tạo Audio Context để tự động tạo âm thanh tổng hợp
+// Audio Context tạo hiệu ứng âm thanh nhạc bính boong
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 
@@ -295,21 +351,18 @@ function initAudio() {
     }
 }
 
-// Hàm phát âm thanh đúng (Ting Ting vui tươi)
+// Âm thanh nhạc bính-boong khi đúng
 function playCorrectSound() {
     initAudio();
     if (!audioCtx) return;
-
     let osc1 = audioCtx.createOscillator();
     let osc2 = audioCtx.createOscillator();
     let gainNode = audioCtx.createGain();
 
     osc1.type = 'sine';
     osc2.type = 'triangle';
-
     osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
     osc1.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.15); // C6
-
     osc2.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
     osc2.frequency.exponentialRampToValueAtTime(1318.51, audioCtx.currentTime + 0.15); // E6
 
@@ -326,11 +379,10 @@ function playCorrectSound() {
     osc2.stop(audioCtx.currentTime + 0.4);
 }
 
-// Hàm phát âm thanh sai (Tạch tạch trầm buồn)
+// Âm thanh nhạc tạch tạch khi sai
 function playWrongSound() {
     initAudio();
     if (!audioCtx) return;
-
     let osc = audioCtx.createOscillator();
     let gainNode = audioCtx.createGain();
 
@@ -348,11 +400,45 @@ function playWrongSound() {
     osc.stop(audioCtx.currentTime + 0.3);
 }
 
+// Đảo vị trí các thẻ
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+// Vẽ thẻ ngẫu nhiên lên màn hình
+function renderCards() {
+    const gameArea = document.getElementById("gameArea");
+    gameArea.innerHTML = "";
+    
+    const shuffledData = shuffleArray(data);
+    
+    shuffledData.forEach(item => {
+        const cardHTML = `
+            <div class="card" data-ans="${item.answer}" onclick="checkAnswer(this)">
+                <img src="${item.src}" alt="${item.name}" class="card-image">
+                <div class="name">${item.name}</div>
+            </div>
+        `;
+        gameArea.innerHTML += cardHTML;
+    });
+}
+
 function randomQuestion() {
     isWaiting = false;
     currentQuestion = data[Math.floor(Math.random() * data.length)];
-    document.getElementById("question").innerHTML = `<i data-lucide="search" style="color: #006600;"></i> Hãy tìm: <b>${currentQuestion.name}</b>`;
-    lucide.createIcons(); // Cập nhật lại các icon vừa được chèn vào HTML động
+    
+    // Câu hỏi chỉ hiển thị chữ rõ nét kèm biểu tượng kính lúp để giáo viên đọc cho bé nghe
+    document.getElementById("question").innerHTML = `
+        <i data-lucide="search" style="color: var(--primary-green); width: 24px; height: 24px;"></i>
+        <span>Bé tìm: <b style="color: var(--primary-red);">${currentQuestion.name}</b></span>
+    `;
+    
+    lucide.createIcons();
 }
 
 function createFirework() {
@@ -379,11 +465,10 @@ function checkAnswer(cardElement) {
         score += 10;
         document.getElementById("score").innerText = score;
         
-        // Hiệu ứng chữ và thẻ
         msg.innerHTML = `<i data-lucide="check-circle" style="color: green;"></i> 🎉 Chính xác!`;
         msg.className = "msg-correct";
         cardElement.classList.add("correct-card");
-        lucide.createIcons(); // Cập nhật icon vừa chèn
+        lucide.createIcons();
 
         playCorrectSound();
 
@@ -392,26 +477,27 @@ function checkAnswer(cardElement) {
         setTimeout(() => {
             msg.innerHTML = "";
             cardElement.classList.remove("correct-card");
+            renderCards();
             randomQuestion();
-        }, 1000);
+        }, 1100);
 
     } else {
-        // Hiệu ứng khi sai
         msg.innerHTML = `<i data-lucide="x-circle" style="color: red;"></i> ❌ Chưa đúng rồi!`;
         msg.className = "msg-wrong";
         cardElement.classList.add("wrong-card");
-        lucide.createIcons(); // Cập nhật icon vừa chèn
+        lucide.createIcons();
 
         playWrongSound();
 
         setTimeout(() => {
             msg.innerHTML = "";
             cardElement.classList.remove("wrong-card");
-        }, 500);
+        }, 800);
     }
 }
 
 function startTimer() {
+    if (timer) clearInterval(timer);
     timer = setInterval(() => {
         timeLeft--;
         document.getElementById("timer").innerText = timeLeft;
@@ -422,6 +508,18 @@ function startTimer() {
     }, 1000);
 }
 
+function startGame() {
+    initAudio();
+    document.getElementById("startScreen").style.display = "none";
+    score = 0;
+    timeLeft = 60;
+    document.getElementById("score").innerText = "0";
+    document.getElementById("timer").innerText = "60";
+    renderCards();
+    randomQuestion();
+    startTimer();
+}
+
 function endGame() {
     document.getElementById("endScreen").style.display = "flex";
     document.getElementById("finalScore").innerText = score;
@@ -429,20 +527,12 @@ function endGame() {
 }
 
 function restartGame() {
-    score = 0;
-    timeLeft = 60;
-    document.getElementById("score").innerText = "0";
-    document.getElementById("timer").innerText = "60";
     document.getElementById("endScreen").style.display = "none";
     document.getElementById("message").innerHTML = "";
-    randomQuestion();
-    clearInterval(timer);
-    startTimer();
+    startGame();
 }
 
-// Khởi tạo game và render các icon ban đầu
-randomQuestion();
-startTimer();
+// Khởi tạo icon Lucide lần đầu
 lucide.createIcons();
 </script>
 </body>
