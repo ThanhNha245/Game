@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌸 Tết Và Mùa Xuân 🌸</title>
+<!-- Thêm icon cho trang web -->
+<link rel="icon" href="images/hoa-dao.png" type="image/png">
+<!-- Thêm thư viện Lucide Icons để sử dụng bộ icon vector sắc nét -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: linear-gradient(to bottom, #fff7cc, #ffd966);
+        overflow-x: hidden;
+    }
+
+    h1 {
+        color: #d60000;
+        margin-top: 15px;
+        text-shadow: 1px 1px 2px white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 15px;
+    }
+
+    .stat-badge {
+        background: white;
+        padding: 8px 20px;
+        border-radius: 30px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .stat-badge.score {
+        color: #d60000;
+    }
+
+    .stat-badge.timer {
+        color: #006600;
+    }
+
+    #question {
+        font-size: 34px;
+        color: #006600;
+        margin: 20px auto;
+        background: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 28px;
+        border-radius: 50px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .game-area {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px;
+        max-width: 1000px;
+        margin: auto;
+    }
+
+    .card {
+        width: 180px;
+        height: 220px;
+        background: white;
+        border-radius: 20px;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(0,0,0,.2);
+        transition: transform .2s, border .2s;
+        overflow: hidden;
+        border: 5px solid transparent;
+        position: relative;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+    /* Hiệu ứng Đúng */
+    .card.correct-card {
+        border-color: #28a745;
+        animation: bounce 0.5s ease;
+    }
+
+    /* Hiệu ứng Sai */
+    .card.wrong-card {
+        border-color: #dc3545;
+        animation: shake 0.4s ease;
+    }
+
+    .card-image {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        margin-top: 10px;
+    }
+
+    .name {
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 10px;
+        color: #333;
+    }
+
+    #message {
+        font-size: 36px;
+        margin: 15px;
+        min-height: 50px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .msg-correct { color: green; }
+    .msg-wrong { color: red; }
+
+    /* Keyframes hiệu ứng */
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        50% { transform: translateX(10px); }
+        75% { transform: translateX(-10px); }
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    #endScreen {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.9);
+        color: white;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        z-index: 999;
+    }
+
+    #endScreen h2 {
+        font-size: 50px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: #ffd966;
+    }
+
+    button {
+        padding: 15px 35px;
+        font-size: 24px;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        background: #d60000;
+        color: white;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 15px rgba(214,0,0,0.4);
+        transition: background 0.2s;
+    }
+
+    button:hover {
+        background: #b30000;
+    }
+
+    .firework {
+        position: fixed;
+        font-size: 40px;
+        animation: boom 1s forwards;
+        pointer-events: none;
+    }
+
+    @keyframes boom {
+        from { opacity: 1; transform: translateY(0) scale(1); }
+        to { opacity: 0; transform: translateY(-150px) scale(2); }
+    }
+</style>
+</head>
+<body>
+
+<h1>
+    <i data-lucide="flower"></i>
+    TẾT VÀ MÙA XUÂN
+    <i data-lucide="flower-2"></i>
+</h1>
+
+<div class="topbar">
+    <div class="stat-badge score">
+        <i data-lucide="sparkles"></i>
+        <span>Điểm: <span id="score">0</span></span>
+    </div>
+    <div class="stat-badge timer">
+        <i data-lucide="timer"></i>
+        <span><span id="timer">60</span>s</span>
+    </div>
+</div>
+
+<div id="question"></div>
+<div id="message"></div>
+
+<div class="game-area" id="gameArea">
+    <!-- Các thẻ Card (Giữ nguyên nguồn hình ảnh có sẵn của bạn) -->
+    <div class="card" data-ans="mai" onclick="checkAnswer(this)">
+        <img src="images/hoa-mai.png" alt="Hoa Mai" class="card-image">
+        <div class="name">Hoa Mai</div>
+    </div>
+    <div class="card" data-ans="dao" onclick="checkAnswer(this)">
+        <img src="images/hoa-dao.png" alt="Hoa Đào" class="card-image">
+        <div class="name">Hoa Đào</div>
+    </div>
+    <div class="card" data-ans="chung" onclick="checkAnswer(this)">
+        <img src="images/banh-chung.png" alt="Bánh Chưng" class="card-image">
+        <div class="name">Bánh Chưng</div>
+    </div>
+    <div class="card" data-ans="tet" onclick="checkAnswer(this)">
+        <img src="images/banh-tet.png" alt="Bánh Tét" class="card-image">
+        <div class="name">Bánh Tét</div>
+    </div>
+    <div class="card" data-ans="lixi" onclick="checkAnswer(this)">
+        <img src="images/bao-li-xi.png" alt="Bao Lì Xì" class="card-image">
+        <div class="name">Bao Lì Xì</div>
+    </div>
+    <div class="card" data-ans="dua" onclick="checkAnswer(this)">
+        <img src="images/dua-hau.png" alt="Dưa Hấu" class="card-image">
+        <div class="name">Dưa Hấu</div>
+    </div>
+    <div class="card" data-ans="mam" onclick="checkAnswer(this)">
+        <img src="images/mam-ngu-qua.png" alt="Mâm Ngũ Quả" class="card-image">
+        <div class="name">Mâm Ngũ Quả</div>
+    </div>
+    <div class="card" data-ans="den" onclick="checkAnswer(this)">
+        <img src="images/den-long.png" alt="Đèn Lồng" class="card-image">
+        <div class="name">Đèn Lồng</div>
+    </div>
+</div>
+
+<div id="endScreen">
+    <h2><i data-lucide="trophy"></i> HOÀN THÀNH</h2>
+    <p style="font-size:35px">Điểm của bé: <span id="finalScore"></span></p>
+    <button onclick="restartGame()">
+        <i data-lucide="refresh-cw"></i>
+        Chơi Lại
+    </button>
+</div>
+
+<script>
+const data = [
+    { name: "Hoa Mai", answer: "mai" },
+    { name: "Hoa Đào", answer: "dao" },
+    { name: "Bánh Chưng", answer: "chung" },
+    { name: "Bánh Tét", answer: "tet" },
+    { name: "Bao Lì Xì", answer: "lixi" },
+    { name: "Dưa Hấu", answer: "dua" },
+    { name: "Mâm Ngũ Quả", answer: "mam" },
+    { name: "Đèn Lồng", answer: "den" }
+];
+
+let currentQuestion;
+let score = 0;
+let timeLeft = 60;
+let timer;
+let isWaiting = false; // Ngăn bấm liên tục khi đang chuyển câu hỏi
+
+// Khởi tạo Audio Context để tự động tạo âm thanh tổng hợp
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new AudioContext();
+    }
+}
+
+// Hàm phát âm thanh đúng (Ting Ting vui tươi)
+function playCorrectSound() {
+    initAudio();
+    if (!audioCtx) return;
+
+    let osc1 = audioCtx.createOscillator();
+    let osc2 = audioCtx.createOscillator();
+    let gainNode = audioCtx.createGain();
+
+    osc1.type = 'sine';
+    osc2.type = 'triangle';
+
+    osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+    osc1.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.15); // C6
+
+    osc2.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
+    osc2.frequency.exponentialRampToValueAtTime(1318.51, audioCtx.currentTime + 0.15); // E6
+
+    gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    osc1.start();
+    osc2.start();
+    osc1.stop(audioCtx.currentTime + 0.4);
+    osc2.stop(audioCtx.currentTime + 0.4);
+}
+
+// Hàm phát âm thanh sai (Tạch tạch trầm buồn)
+function playWrongSound() {
+    initAudio();
+    if (!audioCtx) return;
+
+    let osc = audioCtx.createOscillator();
+    let gainNode = audioCtx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+    osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.25);
+
+    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.3);
+}
+
+function randomQuestion() {
+    isWaiting = false;
+    currentQuestion = data[Math.floor(Math.random() * data.length)];
+    document.getElementById("question").innerHTML = `<i data-lucide="search" style="color: #006600;"></i> Hãy tìm: <b>${currentQuestion.name}</b>`;
+    lucide.createIcons(); // Cập nhật lại các icon vừa được chèn vào HTML động
+}
+
+function createFirework() {
+    const icons = ["🎆","✨","🎉","🌟"];
+    let fw = document.createElement("div");
+    fw.className = "firework";
+    fw.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+    fw.style.left = Math.random() * 90 + "%";
+    fw.style.top = Math.random() * 70 + "%";
+    document.body.appendChild(fw);
+    setTimeout(() => fw.remove(), 1000);
+}
+
+function checkAnswer(cardElement) {
+    if(isWaiting) return; 
+
+    initAudio();
+
+    let ans = cardElement.getAttribute("data-ans");
+    let msg = document.getElementById("message");
+
+    if (ans === currentQuestion.answer) {
+        isWaiting = true;
+        score += 10;
+        document.getElementById("score").innerText = score;
+        
+        // Hiệu ứng chữ và thẻ
+        msg.innerHTML = `<i data-lucide="check-circle" style="color: green;"></i> 🎉 Chính xác!`;
+        msg.className = "msg-correct";
+        cardElement.classList.add("correct-card");
+        lucide.createIcons(); // Cập nhật icon vừa chèn
+
+        playCorrectSound();
+
+        for (let i = 0; i < 10; i++) createFirework();
+
+        setTimeout(() => {
+            msg.innerHTML = "";
+            cardElement.classList.remove("correct-card");
+            randomQuestion();
+        }, 1000);
+
+    } else {
+        // Hiệu ứng khi sai
+        msg.innerHTML = `<i data-lucide="x-circle" style="color: red;"></i> ❌ Chưa đúng rồi!`;
+        msg.className = "msg-wrong";
+        cardElement.classList.add("wrong-card");
+        lucide.createIcons(); // Cập nhật icon vừa chèn
+
+        playWrongSound();
+
+        setTimeout(() => {
+            msg.innerHTML = "";
+            cardElement.classList.remove("wrong-card");
+        }, 500);
+    }
+}
+
+function startTimer() {
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").innerText = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            endGame();
+        }
+    }, 1000);
+}
+
+function endGame() {
+    document.getElementById("endScreen").style.display = "flex";
+    document.getElementById("finalScore").innerText = score;
+    lucide.createIcons();
+}
+
+function restartGame() {
+    score = 0;
+    timeLeft = 60;
+    document.getElementById("score").innerText = "0";
+    document.getElementById("timer").innerText = "60";
+    document.getElementById("endScreen").style.display = "none";
+    document.getElementById("message").innerHTML = "";
+    randomQuestion();
+    clearInterval(timer);
+    startTimer();
+}
+
+// Khởi tạo game và render các icon ban đầu
+randomQuestion();
+startTimer();
+lucide.createIcons();
+</script>
+</body>
+</html>
